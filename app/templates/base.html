@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Главная{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            background-color: #4CAF50;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        textarea {
+            width: 100%;
+            height: 200px; /* Увеличенная высота */
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            resize: none;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #image_preview {
+            margin-top: 20px;
+            max-width: 100%;
+            display: block;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e0f7fa;
+            border: 1px solid #4caf50;
+            border-radius: 5px;
+        }
+        .result p {
+            margin: 0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Идеальная кожа на расстоянии одного фото</h1>
+    </header>
+    <main>
+        <form action="/process" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="image_upload">Загрузите фото:</label>
+                <input type="file" id="image_upload" name="image_upload" accept=".jpg" required>
+                <img id="image_preview" src="#" alt="Предпросмотр изображения" style="display: none;">
+            </div>
+            <div class="form-group">
+                <label for="text_prompt">Введите ваш запрос:</label>
+                <textarea id="text_prompt" name="text_prompt" maxlength="300" required>
+Действуй как топовый косметолог всех звезд Голливуда Шани Дарден. Посмотри на фото. Мне 37 лет. Определи мой тип кожи, сделай диагностику каждой зоны лица и после дай рекомендации по уходу.
+                </textarea>
+            </div>
+            <button type="submit">Отправить запрос</button>
+        </form>
+
+        {% if result %}
+        <div class="result">
+            <h2>Результат:</h2>
+            <p>{{ result|safe }}</p>
+        </div>
+        {% endif %}
+    </main>
+
+    <script>
+        // Предпросмотр загружаемого изображения
+        document.getElementById('image_upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('image_preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                const preview = document.getElementById('image_preview');
+                preview.src = "#";
+                preview.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
