@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 from openai import OpenAI
 import base64
+import json
 from datetime import datetime
 from config import OPENAI_API_KEY  # API-ключ для ChatGPT
 from api_config import ALLOWED_API_KEYS  # API-ключи для доступа к API
@@ -104,12 +105,14 @@ def api_process():
 
         formatted_result = format_result(raw_result)
 
-        # Теперь результат возвращается корректно в кодировке UTF-8
-        return jsonify({"result": formatted_result}), 200, {'Content-Type': 'application/json; charset=utf-8'}
+        # Корректный возврат JSON с кодировкой UTF-8
+        response_data = json.dumps({"result": formatted_result}, ensure_ascii=False)
+        return Response(response_data, status=200, mimetype="application/json; charset=utf-8")
 
     except Exception as e:
         print(f"API Error: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        response_data = json.dumps({"error": str(e)}, ensure_ascii=False)
+        return Response(response_data, status=500, mimetype="application/json; charset=utf-8")
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
