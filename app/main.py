@@ -103,7 +103,9 @@ def api_process():
         raw_result = analyze_image_with_text(image_base64, text_prompt)
 
         formatted_result = format_result(raw_result)
-        return jsonify({"result": formatted_result})
+
+        # Теперь результат возвращается корректно в кодировке UTF-8
+        return jsonify({"result": formatted_result}), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
     except Exception as e:
         print(f"API Error: {str(e)}")
