@@ -1,0 +1,36 @@
+---
+- name: Deploy Docker container
+  hosts: my_server
+  become: true
+
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Ensure Docker is running
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Stop and remove existing container (if running)
+      ignore_errors: yes
+      command: docker rm -f landing_with_chatgpt
+
+    - name: Remove old Docker image (if exists)
+      ignore_errors: yes
+      command: docker rmi landing_with_chatgpt:latest
+
+    - name: Copy Docker image tar to server
+      copy:
+        src: landing_with_chatgpt.tar
+        dest: /tmp/landing_with_chatgpt.tar
+
+    - name: Load Docker image on server
+      shell: docker load < /tmp/landing_with_chatgpt.tar
+
+    - name: Run Docker container
+      command: docker run -d -p 5000:5000 --restart unless-stopped --name landing_with_chatgpt landing_with_chatgpt:latest

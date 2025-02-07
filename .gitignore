@@ -27,7 +27,7 @@ uploads/
 
 # Исключаем файлы и каталоги, относящиеся к Docker
 Dockerfile
-deploy_docker.yml
+
 
 # Исключаем зависимости, если используем Poetry/Pipenv
 .poetry/
